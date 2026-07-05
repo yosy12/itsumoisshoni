@@ -9,52 +9,71 @@ interface PetHomePageProps {
   onAddPet: () => void;
 }
 
+const sceneDecorations: Record<string, string> = {
+  morning: '🌅 ☀️ 🐦',
+  daytime: '☀️ 🌿 🌸',
+  work: '💤 🌿 ☁️',
+  evening: '🌇 🍂 🌙',
+  night: '🌙 ⭐ ✨',
+};
+
 export const PetHomePage = ({ pet, allPets, onSwitchPet, onAddPet }: PetHomePageProps) => {
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
   const [showPetList, setShowPetList] = useState(false);
+  const [activeAction, setActiveAction] = useState<string | null>(null);
 
   const timeConfig = getTimeConfig();
   const availableActions = getActionsForTimeAndKind(timeConfig.slot, pet.kind);
+  const decoration = sceneDecorations[timeConfig.slot] || '🌿';
 
-  const handleAction = (response: (name: string) => string) => {
+  const handleAction = (actionId: string, response: (name: string) => string) => {
     setMessage(response(pet.name));
     setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 3000);
+    setActiveAction(actionId);
+    setTimeout(() => {
+      setShowMessage(false);
+      setActiveAction(null);
+    }, 3000);
   };
 
   const statusEmoji = pet.status === 'rainbow' ? '🌈' : pet.status === 'living' ? '🏠' : '⭐';
 
   return (
-    <div className={`min-h-screen bg-gradient-to-b ${timeConfig.bgGradient} flex flex-col items-center`}>
+    <div className={`min-h-screen bg-gradient-to-b ${timeConfig.bgGradient} flex flex-col`}>
 
       {/* ヘッダー */}
-      <div className="w-full max-w-sm px-4 pt-8 pb-2 flex justify-between items-center">
+      <div className="flex justify-between items-center px-5 pt-10 pb-2">
         <button
           onClick={() => setShowPetList(!showPetList)}
-          className="text-amber-600 text-sm bg-white/60 px-3 py-1 rounded-full"
+          className="w-9 h-9 rounded-full bg-white/60 backdrop-blur flex items-center justify-center text-base shadow-sm"
         >
-          🐾 {allPets.length > 1 ? 'きりかえ' : 'マイペット'}
+          🐾
         </button>
-        <h1 className="text-lg font-bold text-amber-800">いつも一緒</h1>
-        <button className="text-amber-600 text-sm bg-white/60 px-3 py-1 rounded-full">⚙️</button>
+        <div className="text-center">
+          <h1 className="text-base font-bold text-amber-900 tracking-widest">いつも一緒</h1>
+          <p className="text-xs text-amber-700/70">{timeConfig.emoji} {timeConfig.label}</p>
+        </div>
+        <div className="w-9 h-9 rounded-full bg-white/60 backdrop-blur flex items-center justify-center text-base shadow-sm">
+          ⚙️
+        </div>
       </div>
 
       {/* ペット切り替えリスト */}
       {showPetList && (
-        <div className="w-full max-w-sm px-4 mb-2">
-          <div className="bg-white/90 rounded-2xl shadow p-3 flex flex-col gap-2">
+        <div className="mx-4 mb-2">
+          <div className="bg-white/90 backdrop-blur rounded-2xl shadow-lg p-3 flex flex-col gap-2">
             {allPets.map(p => (
               <button
                 key={p.id}
                 onClick={() => { onSwitchPet(p.id); setShowPetList(false); }}
                 className={`flex items-center gap-3 p-2 rounded-xl transition-all ${p.id === pet.id ? 'bg-amber-50 border border-amber-300' : 'hover:bg-gray-50'}`}
               >
-                <div className="w-10 h-10 rounded-full overflow-hidden">
+                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow">
                   <img src={p.photo} alt={p.name} className="w-full h-full object-cover" />
                 </div>
                 <span className="text-sm font-medium text-gray-700">{p.name}</span>
-                {p.id === pet.id && <span className="ml-auto text-amber-500 text-xs">いま</span>}
+                {p.id === pet.id && <span className="ml-auto text-amber-500 text-xs font-medium">いま</span>}
               </button>
             ))}
             <button
@@ -68,54 +87,61 @@ export const PetHomePage = ({ pet, allPets, onSwitchPet, onAddPet }: PetHomePage
         </div>
       )}
 
-      {/* タイムラベル */}
-      <div className="text-center mb-2">
-        <span className="text-xs text-amber-700 bg-amber-100/80 px-3 py-1 rounded-full">
-          {timeConfig.emoji} {timeConfig.sceneLabel}
-        </span>
-      </div>
+      {/* メインエリア */}
+      <div className="flex-1 flex flex-col items-center px-5">
 
-      {/* メインカード */}
-      <div className="w-full max-w-sm px-4 flex-1 flex flex-col items-center">
-        <div className="w-full bg-white/70 backdrop-blur rounded-3xl shadow-lg overflow-hidden">
+        {/* シーン装飾 */}
+        <div className="text-2xl tracking-widest opacity-40 mb-1 select-none">{decoration}</div>
 
-          <div className="relative pt-6 pb-4 px-6 flex flex-col items-center">
+        {/* シーンラベル */}
+        <div className="bg-white/50 backdrop-blur px-4 py-1 rounded-full mb-4">
+          <span className="text-xs font-medium text-amber-800">{timeConfig.sceneLabel}</span>
+        </div>
 
-            {/* ステータスバッジ */}
-            <div className="absolute top-3 right-4 text-xs text-gray-400">
-              {statusEmoji}
+        {/* ペット写真エリア */}
+        <div className="relative flex flex-col items-center mb-4">
+
+          {/* セリフバブル */}
+          {showMessage && (
+            <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-64 bg-white rounded-2xl px-4 py-3 shadow-lg border border-amber-100 z-10">
+              <p className="text-sm text-gray-600 text-center leading-relaxed">{message}</p>
+              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-r border-b border-amber-100 rotate-45" />
             </div>
+          )}
 
-            {/* ペット写真 */}
-            <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-white shadow-md">
+          {/* ペット写真 */}
+          <div className={`relative transition-transform duration-300 ${activeAction ? 'scale-105' : 'scale-100'}`}>
+            <div className="w-52 h-52 rounded-full overflow-hidden border-4 border-white shadow-xl">
               <img
                 src={pet.photo}
                 alt={pet.name}
                 className="w-full h-full object-cover"
               />
             </div>
-
-            <h2 className="mt-3 text-xl font-bold text-gray-700">{pet.name}</h2>
-            {pet.personality && (
-              <p className="text-xs text-gray-400 mt-1 text-center">{pet.personality}</p>
-            )}
-
-            {/* セリフバブル */}
-            {showMessage && (
-              <div className="absolute top-4 left-4 right-4 bg-white rounded-2xl p-3 shadow-md border border-amber-100 text-sm text-gray-600 text-center leading-relaxed">
-                {message}
-              </div>
-            )}
+            {/* ステータスバッジ */}
+            <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-white shadow flex items-center justify-center text-base">
+              {statusEmoji}
+            </div>
           </div>
+
+          {/* 名前 */}
+          <h2 className="mt-4 text-2xl font-bold text-amber-900">{pet.name}</h2>
+          {pet.personality && (
+            <p className="text-xs text-amber-700/60 mt-1 text-center max-w-xs">{pet.personality}</p>
+          )}
         </div>
 
         {/* アクションボタン */}
-        <div className="w-full mt-4 grid grid-cols-3 gap-2">
+        <div className="w-full grid grid-cols-3 gap-2.5 mb-4">
           {availableActions.map(action => (
             <button
               key={action.id}
-              onClick={() => handleAction(action.response)}
-              className="bg-white/80 hover:bg-amber-50 active:scale-95 transition-all rounded-2xl py-3 px-2 flex flex-col items-center gap-1 shadow-sm border border-amber-100"
+              onClick={() => handleAction(action.id, action.response)}
+              className={`rounded-2xl py-3.5 px-2 flex flex-col items-center gap-1.5 shadow-sm border transition-all active:scale-95
+                ${activeAction === action.id
+                  ? 'bg-amber-100 border-amber-300 scale-95'
+                  : 'bg-white/80 backdrop-blur border-white hover:bg-amber-50 hover:border-amber-200'
+                }`}
             >
               <span className="text-2xl">{action.emoji}</span>
               <span className="text-xs text-gray-600 font-medium">{action.label}</span>
@@ -124,16 +150,14 @@ export const PetHomePage = ({ pet, allPets, onSwitchPet, onAddPet }: PetHomePage
         </div>
 
         {/* My Treasury ARF リンク */}
-        <div className="w-full mt-6 mb-8">
-          <a
-            href="https://my-treasury-arf.pages.dev/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full block text-center text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-xl py-3 hover:bg-amber-100 transition-all"
-          >
-            🌿 ペットのことで迷ったら相談できます → My Treasury ARF
-          </a>
-        </div>
+        <a
+          href="https://my-treasury-arf.pages.dev/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full text-center text-xs text-amber-700 bg-white/50 backdrop-blur border border-amber-200/50 rounded-xl py-3 mb-6 hover:bg-white/70 transition-all"
+        >
+          🌿 ペットのことで迷ったら → <span className="font-medium">My Treasury ARF</span> に相談
+        </a>
       </div>
     </div>
   );
