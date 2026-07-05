@@ -25,7 +25,7 @@ export const samplePets: Pet[] = [
   },
   {
     id: 'layla',
-    name: 'レイラ',
+    name: 'ライラ',
     photo: `${base}pets/layla.jpg`,
     kind: 'dog',
     status: 'rainbow',

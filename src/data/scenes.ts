@@ -32,17 +32,17 @@ export const getTimeConfig = (): TimeConfig => {
   };
   if (hour >= 17 && hour < 19) return {
     slot: 'evening', label: 'ゆうがたの時間', emoji: '🌇',
-    bgGradient: 'from-orange-200 via-pink-100 to-rose-50',
+    bgGradient: 'from-orange-300 via-rose-200 to-pink-100',
     sceneLabel: 'おかえりのじかん',
   };
   if (hour >= 19 && hour < 22) return {
     slot: 'evening', label: 'よるの時間', emoji: '🌙',
-    bgGradient: 'from-indigo-100 via-purple-50 to-pink-50',
+    bgGradient: 'from-violet-300 via-purple-200 to-indigo-100',
     sceneLabel: 'ゆっくりくつろいで',
   };
   return {
     slot: 'night', label: 'おやすみの時間', emoji: '✨',
-    bgGradient: 'from-indigo-200 via-purple-100 to-blue-50',
+    bgGradient: 'from-indigo-400 via-purple-300 to-violet-200',
     sceneLabel: 'おやすみなさい',
   };
 };
