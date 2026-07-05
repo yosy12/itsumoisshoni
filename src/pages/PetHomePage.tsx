@@ -17,11 +17,19 @@ const sceneDecorations: Record<string, string> = {
   night: '🌙 ⭐ ✨',
 };
 
+const premiumFeatures = [
+  { id: 'talk', emoji: '💬', label: '話しかける', desc: `${' '}AIがその子らしく返事してくれます` },
+  { id: 'album', emoji: '📷', label: 'アルバム', desc: '季節ごとに思い出を残せます' },
+  { id: 'theme', emoji: '🎨', label: '雰囲気', desc: '背景テーマを選べます' },
+];
+
 export const PetHomePage = ({ pet, allPets, onSwitchPet, onAddPet }: PetHomePageProps) => {
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
   const [showPetList, setShowPetList] = useState(false);
   const [activeAction, setActiveAction] = useState<string | null>(null);
+  const [showPremium, setShowPremium] = useState(false);
+  const [tappedFeature, setTappedFeature] = useState<typeof premiumFeatures[0] | null>(null);
 
   const timeConfig = getTimeConfig();
   const availableActions = getActionsForTimeAndKind(timeConfig.slot, pet.kind);
@@ -35,6 +43,11 @@ export const PetHomePage = ({ pet, allPets, onSwitchPet, onAddPet }: PetHomePage
       setShowMessage(false);
       setActiveAction(null);
     }, 3000);
+  };
+
+  const handlePremiumTap = (feature: typeof premiumFeatures[0]) => {
+    setTappedFeature(feature);
+    setShowPremium(true);
   };
 
   const statusEmoji = pet.status === 'rainbow' ? '🌈' : pet.status === 'living' ? '🏠' : '⭐';
@@ -100,39 +113,28 @@ export const PetHomePage = ({ pet, allPets, onSwitchPet, onAddPet }: PetHomePage
 
         {/* ペット写真エリア */}
         <div className="relative flex flex-col items-center mb-4">
-
-          {/* セリフバブル */}
           {showMessage && (
             <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-64 bg-white rounded-2xl px-4 py-3 shadow-lg border border-amber-100 z-10">
               <p className="text-sm text-gray-600 text-center leading-relaxed">{message}</p>
               <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-r border-b border-amber-100 rotate-45" />
             </div>
           )}
-
-          {/* ペット写真 */}
           <div className={`relative transition-transform duration-300 ${activeAction ? 'scale-105' : 'scale-100'}`}>
             <div className="w-56 h-56 rounded-full overflow-hidden border-[6px] border-white shadow-2xl">
-              <img
-                src={pet.photo}
-                alt={pet.name}
-                className="w-full h-full object-cover"
-              />
+              <img src={pet.photo} alt={pet.name} className="w-full h-full object-cover" />
             </div>
-            {/* ステータスバッジ */}
             <div className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-white shadow flex items-center justify-center text-base">
               {statusEmoji}
             </div>
           </div>
-
-          {/* 名前 */}
           <h2 className="mt-4 text-2xl font-bold text-amber-900">{pet.name}</h2>
           {pet.personality && (
             <p className="text-xs text-amber-700/60 mt-1 text-center max-w-xs">{pet.personality}</p>
           )}
         </div>
 
-        {/* アクションボタン */}
-        <div className="w-full grid grid-cols-3 gap-2.5 mb-4">
+        {/* 無料アクションボタン */}
+        <div className="w-full grid grid-cols-3 gap-2.5 mb-3">
           {availableActions.map(action => (
             <button
               key={action.id}
@@ -149,6 +151,28 @@ export const PetHomePage = ({ pet, allPets, onSwitchPet, onAddPet }: PetHomePage
           ))}
         </div>
 
+        {/* プレミアム機能（鍵付き） */}
+        <div className="w-full mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex-1 h-px bg-amber-200/60" />
+            <span className="text-xs text-amber-600/70 font-medium">プレミアム機能</span>
+            <div className="flex-1 h-px bg-amber-200/60" />
+          </div>
+          <div className="grid grid-cols-3 gap-2.5">
+            {premiumFeatures.map(feature => (
+              <button
+                key={feature.id}
+                onClick={() => handlePremiumTap(feature)}
+                className="relative rounded-2xl py-3.5 px-2 flex flex-col items-center gap-1.5 bg-white/40 backdrop-blur border border-white/60 shadow-sm active:scale-95 transition-all"
+              >
+                <span className="text-2xl opacity-50">{feature.emoji}</span>
+                <span className="text-xs text-gray-400 font-medium">{feature.label}</span>
+                <div className="absolute top-1.5 right-1.5 text-xs">🔒</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* My Treasury ARF リンク */}
         <a
           href="https://my-treasury-arf.pages.dev/"
@@ -159,6 +183,52 @@ export const PetHomePage = ({ pet, allPets, onSwitchPet, onAddPet }: PetHomePage
           🌿 ペットのことで迷ったら → <span className="font-medium">My Treasury ARF</span> に相談
         </a>
       </div>
+
+      {/* プレミアム紹介モーダル */}
+      {showPremium && tappedFeature && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-end justify-center z-50"
+          onClick={() => setShowPremium(false)}
+        >
+          <div
+            className="w-full max-w-sm bg-white rounded-t-3xl p-6 pb-10 shadow-2xl"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+            <div className="text-4xl text-center mb-3">{tappedFeature.emoji}</div>
+            <h3 className="text-lg font-bold text-center text-gray-800 mb-1">{tappedFeature.label}</h3>
+            <p className="text-sm text-gray-500 text-center mb-5">{tappedFeature.desc}</p>
+
+            <div className="bg-amber-50 rounded-2xl p-4 mb-5">
+              <p className="text-xs text-amber-700 text-center font-medium">
+                🌟 プレミアムプランで使えるようになります
+              </p>
+              <div className="mt-3 flex flex-col gap-2">
+                {premiumFeatures.map(f => (
+                  <div key={f.id} className="flex items-center gap-2 text-xs text-gray-600">
+                    <span>{f.emoji}</span>
+                    <span>{f.label}</span>
+                    <span className="text-gray-400">— {f.desc.trim()}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowPremium(false)}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 rounded-2xl text-sm active:scale-95 transition-all"
+            >
+              近日公開予定 — お楽しみに 🐾
+            </button>
+            <button
+              onClick={() => setShowPremium(false)}
+              className="w-full text-gray-400 text-sm mt-3"
+            >
+              とじる
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
