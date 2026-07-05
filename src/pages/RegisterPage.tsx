@@ -41,7 +41,7 @@ export const RegisterPage = ({ onComplete, onBack }: RegisterPageProps) => {
     const pet: Pet = {
       id: `pet_${Date.now()}`,
       name: name.trim(),
-      photo: photo || '/pets/chuck.jpg',
+      photo: photo || `${import.meta.env.BASE_URL}pets/chuck.jpg`,
       kind,
       status,
       personality: personality.trim(),

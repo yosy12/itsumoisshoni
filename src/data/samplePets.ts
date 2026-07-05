@@ -1,10 +1,12 @@
 import type { Pet } from '../types';
 
+const base = import.meta.env.BASE_URL;
+
 export const samplePets: Pet[] = [
   {
     id: 'chuck',
     name: 'チャック',
-    photo: '/pets/chuck.jpg',
+    photo: `${base}pets/chuck.jpg`,
     kind: 'dog',
     status: 'rainbow',
     personality: '甘えん坊で食いしん坊。でもちょっとわがまま',
@@ -14,7 +16,7 @@ export const samplePets: Pet[] = [
   {
     id: 'adam',
     name: 'アダム',
-    photo: '/pets/adam.jpg',
+    photo: `${base}pets/adam.jpg`,
     kind: 'dog',
     status: 'rainbow',
     personality: 'マイペースでのんびり屋。でも遊ぶときは全力',
@@ -24,7 +26,7 @@ export const samplePets: Pet[] = [
   {
     id: 'layla',
     name: 'レイラ',
-    photo: '/pets/layla.jpg',
+    photo: `${base}pets/layla.jpg`,
     kind: 'dog',
     status: 'rainbow',
     personality: '好奇心旺盛でやんちゃ。いつも元気いっぱい',
@@ -34,7 +36,7 @@ export const samplePets: Pet[] = [
   {
     id: 'mila',
     name: 'ミラ',
-    photo: '/pets/mila.jpg',
+    photo: `${base}pets/mila.jpg`,
     kind: 'dog',
     status: 'rainbow',
     personality: '穏やかで賢い。空気を読むのが得意',
@@ -44,7 +46,7 @@ export const samplePets: Pet[] = [
   {
     id: 'sophie',
     name: 'ソフィー',
-    photo: '/pets/sophie.jpg',
+    photo: `${base}pets/sophie.jpg`,
     kind: 'dog',
     status: 'rainbow',
     personality: 'ちょっぴりツンデレ。でも本当は甘えたがり',
