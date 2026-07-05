@@ -1,9 +1,18 @@
 import { useState, useRef } from 'react';
 import type { Pet, PetKind, PetStatus } from '../types';
 
+interface PrefilledPet {
+  name?: string;
+  kind?: PetKind;
+  photo?: string;
+  status?: PetStatus;
+  fromOsewa?: boolean;
+}
+
 interface RegisterPageProps {
   onComplete: (pet: Pet) => void;
   onBack: () => void;
+  prefilled?: PrefilledPet;
 }
 
 const kindOptions: { value: PetKind; label: string; emoji: string }[] = [
@@ -19,13 +28,13 @@ const statusOptions: { value: PetStatus; label: string; desc: string }[] = [
   { value: 'virtual', label: '架空のコ', desc: '夢の子・想像のコ' },
 ];
 
-export const RegisterPage = ({ onComplete, onBack }: RegisterPageProps) => {
-  const [name, setName] = useState('');
-  const [kind, setKind] = useState<PetKind>('dog');
-  const [status, setStatus] = useState<PetStatus>('rainbow');
+export const RegisterPage = ({ onComplete, onBack, prefilled }: RegisterPageProps) => {
+  const [name, setName] = useState(prefilled?.name || '');
+  const [kind, setKind] = useState<PetKind>(prefilled?.kind || 'dog');
+  const [status, setStatus] = useState<PetStatus>(prefilled?.status || 'rainbow');
   const [personality, setPersonality] = useState('');
   const [likes, setLikes] = useState('');
-  const [photo, setPhoto] = useState<string>('');
+  const [photo, setPhoto] = useState<string>(prefilled?.photo || '');
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,6 +68,14 @@ export const RegisterPage = ({ onComplete, onBack }: RegisterPageProps) => {
         <h1 className="flex-1 text-center text-lg font-bold text-amber-800 mr-8">このコについて</h1>
       </div>
 
+      {/* お世話管理からの引き継ぎバナー */}
+      {prefilled?.fromOsewa && (
+        <div className="mx-4 mb-2 bg-amber-100 border border-amber-300 rounded-2xl px-4 py-3 text-sm text-amber-800 text-center">
+          🌈 お世話管理アプリから引き継ぎました。<br />
+          <span className="text-xs text-amber-600">内容を確認して登録してください</span>
+        </div>
+      )}
+
       <div className="flex-1 px-4 pb-8 flex flex-col gap-5 max-w-sm mx-auto w-full">
 
         {/* 写真 */}
@@ -73,7 +90,7 @@ export const RegisterPage = ({ onComplete, onBack }: RegisterPageProps) => {
             }
           </div>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
-          <p className="text-xs text-gray-400">タップして写真を選ぶ</p>
+          <p className="text-xs text-gray-400">タップして写真を変更</p>
         </div>
 
         {/* 名前 */}

@@ -3,14 +3,37 @@ import { HomePage } from './pages/HomePage';
 import { RegisterPage } from './pages/RegisterPage';
 import { PetHomePage } from './pages/PetHomePage';
 import { useAppState } from './hooks/useAppState';
-import type { Pet } from './types';
+import type { Pet, PetKind, PetStatus } from './types';
 
 type Screen = 'home' | 'register' | 'mypet';
 
+interface PrefilledPet {
+  name?: string;
+  kind?: PetKind;
+  photo?: string;
+  status?: PetStatus;
+  fromOsewa?: boolean;
+}
+
+const parseUrlParams = (): PrefilledPet => {
+  const params = new URLSearchParams(window.location.search);
+  const kind = params.get('kind');
+  const status = params.get('status');
+  return {
+    name: params.get('name') || undefined,
+    kind: (['dog','cat','bird','other'].includes(kind || '') ? kind as PetKind : undefined),
+    photo: params.get('photo') || undefined,
+    status: (['rainbow','living','virtual'].includes(status || '') ? status as PetStatus : undefined),
+    fromOsewa: params.get('from') === 'osewa',
+  };
+};
+
 function App() {
   const { state, registerPet, switchPet, getCurrentPet } = useAppState();
+  const prefilled = parseUrlParams();
 
   const getInitialScreen = (): Screen => {
+    if (prefilled.fromOsewa) return 'register';
     if (state.registeredPets.length > 0) return 'mypet';
     return 'home';
   };
@@ -19,6 +42,8 @@ function App() {
 
   const handleRegisterComplete = (pet: Pet) => {
     registerPet(pet);
+    // URLパラメータをクリア
+    window.history.replaceState({}, '', window.location.pathname);
     setScreen('mypet');
   };
 
@@ -33,6 +58,7 @@ function App() {
         <RegisterPage
           onComplete={handleRegisterComplete}
           onBack={() => setScreen(state.registeredPets.length > 0 ? 'mypet' : 'home')}
+          prefilled={prefilled}
         />
       )}
       {screen === 'mypet' && currentPet && (
