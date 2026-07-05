@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARF株式会社 エージェント化マップ v0</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+:root{
+  --gold:#D2A70A; --gold-d:#B8901E; --ink:#1A171D; --cream:#FAF5E5;
+  --s0:#9aa0a6; --s1:#d9534f; --s2:#e0a106; --s3:#2f7d4f;
+  --line:#e2ddd0; --r-a:#3b82c4; --r-b:#7a5cc0; --r-c:#d98a3a;
+}
+body{ font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif; background:#f4f2ed; color:#222; padding:24px; line-height:1.55; }
+.wrap{ max-width:1500px; margin:0 auto; background:#fff; box-shadow:0 6px 24px rgba(0,0,0,.09); padding:34px 40px; }
+header.top{ display:flex; justify-content:space-between; align-items:flex-end; border-bottom:4px solid var(--gold); padding-bottom:16px; margin-bottom:8px; }
+header.top h1{ font-size:23px; letter-spacing:1px; } header.top .sub{ font-size:13px; color:#777; margin-top:6px; }
+header.top .meta{ font-size:12px; color:#777; text-align:right; } header.top .meta strong{ color:var(--ink); }
+.hero{ margin:18px 0 6px; padding:16px 20px; background:linear-gradient(100deg,#1A171D,#2b2630); color:#f3eecf; border-radius:6px; }
+.hero b{ color:var(--gold); } .hero .big{ font-size:17px; font-weight:700; line-height:1.6; } .hero .small{ font-size:12px; color:#b9b2a0; margin-top:6px; }
+.seclabel{ background:linear-gradient(90deg,var(--gold),var(--gold-d)); color:#fff; padding:7px 16px; font-weight:700; font-size:14px; letter-spacing:2px; margin:26px 0 12px; border-radius:3px; }
+.cols{ display:grid; grid-template-columns:1fr 1fr; gap:18px; } @media(max-width:1000px){ .cols{ grid-template-columns:1fr; } }
+.card{ border:1.5px solid var(--line); border-radius:6px; padding:14px 16px; background:#fbfaf6; } .card h3{ font-size:14px; color:var(--ink); margin-bottom:8px; } .card p{ font-size:12.5px; color:#444; }
+.ladder{ display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; } .lv{ flex:1; min-width:90px; border-radius:5px; padding:8px 9px; color:#fff; font-size:11.5px; line-height:1.4; } .lv b{ display:block; font-size:13px; margin-bottom:2px; }
+.lv0{ background:var(--s0);} .lv1{ background:var(--s1);} .lv2{ background:var(--s2);} .lv3{ background:var(--s3);}
+.track{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:6px; } .track .t{ border-radius:6px; padding:10px 12px; font-size:12px; }
+.t.input{ background:#e7f3ec; border-left:4px solid var(--s3); } .t.agent{ background:#efe9fb; border-left:4px solid var(--r-b); } .t.output{ background:#fdeccf; border-left:4px solid var(--gold-d); } .t b{ font-size:12.5px; color:var(--ink); }
+.find{ width:100%; border-collapse:collapse; font-size:12.5px; margin-top:4px; } .find th{ background:#f0ece0; text-align:left; padding:7px 9px; font-size:11.5px; } .find td{ padding:8px 9px; border-bottom:1px solid var(--line); vertical-align:top; } .find .ok{ color:var(--s3); font-weight:700; } .find .gap{ color:var(--s1); font-weight:700; }
+table.map{ width:100%; border-collapse:collapse; font-size:12px; margin-top:4px; } table.map th{ background:var(--ink); color:#fff; padding:8px; text-align:left; font-size:11px; } table.map td{ padding:8px; border-bottom:1px solid var(--line); vertical-align:top; } table.map tr:nth-child(even) td{ background:#faf8f2; }
+.group-header td{ background:#f5f0e8 !important; color:var(--gold-d); font-weight:700; font-size:11px; padding:5px 8px; letter-spacing:1px; }
+.ordbadge{ display:inline-block; width:22px; height:22px; line-height:22px; text-align:center; border-radius:50%; background:var(--gold); color:#fff; font-weight:700; font-size:12px; } .ordbadge.cool{ background:#bcae8a; }
+.pill{ display:inline-block; padding:1px 8px; border-radius:10px; font-size:10.5px; color:#fff; font-weight:700; white-space:nowrap; } .p0{ background:var(--s0);} .p1{ background:var(--s1);} .p2{ background:var(--s2);} .p3{ background:var(--s3);}
+.arrow{ color:#999; } .cost{ font-weight:700; } .cost.s{ color:var(--s3);} .cost.m{ color:var(--s2);} .cost.l{ color:var(--s1);} .miss{ color:var(--s1); }
+.rtag{ display:inline-block; padding:1px 7px; border-radius:4px; font-size:10px; color:#fff; font-weight:700; } .ra{ background:var(--r-a);} .rb{ background:var(--r-b);} .rc{ background:var(--r-c);}
+.wires{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:6px; } @media(max-width:1000px){ .wires{ grid-template-columns:1fr; } }
+.wire{ border:1.5px solid var(--gold); border-radius:8px; padding:14px 16px; background:linear-gradient(180deg,#fffdf6,#fcf6e6); } .wire .n{ font-size:30px; font-weight:800; color:var(--gold-d); line-height:1; } .wire h4{ font-size:14px; margin:6px 0; color:var(--ink); } .wire p{ font-size:12px; color:#555; } .wire .why{ margin-top:8px; font-size:11.5px; color:var(--gold-d); font-weight:700; }
+.coef{ display:grid; grid-template-columns:1.1fr 1fr; gap:20px; align-items:start; } @media(max-width:1000px){ .coef{ grid-template-columns:1fr; } }
+.gauge{ text-align:center; padding:10px; } .gauge .num{ font-size:54px; font-weight:800; color:var(--gold-d); line-height:1; } .gauge .to{ font-size:15px; color:#888; margin-top:6px; }
+.bar{ height:18px; background:#eee; border-radius:9px; overflow:hidden; position:relative; margin-top:8px; } .bar>i{ display:block; height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-d)); } .bar .tgt{ position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--ink); }
+.arow{ display:grid; grid-template-columns:150px 1fr 80px; gap:8px; align-items:center; font-size:11.5px; margin:6px 0; } .arow .mini{ height:11px; background:#ece8dd; border-radius:6px; overflow:hidden; } .arow .mini>i{ display:block; height:100%; }
+.loop{ display:flex; flex-wrap:wrap; gap:8px; align-items:stretch; margin-top:6px; } .step{ flex:1; min-width:130px; background:#fbfaf6; border:1.5px solid var(--line); border-radius:6px; padding:10px; font-size:11.5px; position:relative; } .step b{ display:block; color:var(--ink); font-size:12px; margin-bottom:3px; } .step .ag{ color:var(--r-b); font-weight:700; font-size:10.5px; margin-top:4px; } .step:after{ content:"▶"; position:absolute; right:-11px; top:50%; transform:translateY(-50%); color:var(--gold); font-size:12px; } .step:last-child:after{ content:""; }
+.note{ background:var(--cream); border-left:3px solid var(--gold-d); padding:8px 12px; font-size:11.5px; margin-top:10px; border-radius:0 4px 4px 0; }
+footer{ margin-top:26px; padding-top:14px; border-top:1px solid var(--line); font-size:10.5px; color:#999; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+.legend{ font-size:11px; color:#777; margin-top:8px; } .legend .pill{ margin-right:4px; }
+@media print{ body{ background:#fff; padding:0;} .wrap{ box-shadow:none; max-width:none; padding:14px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ヘッダー -->
+<header class="top">
+  <div>
+    <h1>ARF株式会社（My Treasury ARF）　エージェント化マップ v0</h1>
+    <div class="sub">ゴール：須田氏1人でも「AIと5匹が働く間に回る」事業基盤をつくる ── 現職兼業・準備期から開業期へ</div>
+  </div>
+  <div class="meta">
+    作成日：2026-06-07　｜　モード：⚙️ 標準モード（準備期→開業期）<br>
+    <strong>現Lvは見立て・要補正。金額はすべて概算。</strong>
+  </div>
+</header>
+
+<!-- ヒーロー帯 -->
+<div class="hero">
+  <div class="big">🎯 「大企業HR × アニマルコミュニケーター」の掛け算で、<b>属人から自動収益へ</b>シフトする</div>
+  <div class="small">現職兼業で時間が取れない今こそ、開業後に回る仕組みを先に作る。SNS台本・ケアプランレポート・予約受付を最初の3本に定め、1日30分以内の投入でTier1〜Tier2が動き始める状態を目指す。部品（ネタ・テンプレート・お世話管理シート）はすでにある。あとは繋ぐだけ。</div>
+</div>
+
+<!-- 読み方 -->
+<div class="seclabel">1. 読み方</div>
+<div class="cols">
+  <div class="card">
+    <h3>自律度の4段ラダー（手直し量で測る）</h3>
+    <div class="ladder">
+      <div class="lv lv0"><b>人力</b>全部手で動かす。エージェントなし。</div>
+      <div class="lv lv1"><b>たたき台</b>AIが下書き。人が大きく直す。</div>
+      <div class="lv lv2"><b>承認</b>AIが完成形を出す。人はOK/NGを押すだけ。</div>
+      <div class="lv lv3"><b>無人運転</b>AIまたはシステムが自動実行。例外のみ人へ。</div>
+    </div>
+    <p style="margin-top:8px;font-size:11px;color:#777;">無人運転 ＝ AI判断なら「AIコントロール」／ 決定論オペ（条件・イベント連鎖）なら「システム自動」</p>
+  </div>
+  <div class="card">
+    <h3>天井を決める3部品</h3>
+    <div class="track">
+      <div class="t input"><b>🟦 入力の自動化</b>データをAIが自分で取れるか（Drive連携・API等）</div>
+      <div class="t agent"><b>🟪 エージェント</b>プロンプト＋AI判断。手直し量が少ない＝信頼度が高い</div>
+      <div class="t output"><b>🟧 出力の自動化</b>結果が自動で着地するか（SNS予約投稿・メール自動送信等）</div>
+    </div>
+    <p style="margin-top:8px;font-size:11px;color:#777;"><b>構造軸（天井）</b>＝ min(入力の自動化, 出力の自動化)　／　<b>品質軸</b>＝ エージェントの手直し量の少なさ</p>
+    <div style="margin-top:10px;" class="legend">
+      経路：<span class="rtag ra">🤖A エージェント化</span>&nbsp;<span class="rtag rb">🗄️B 共有DB</span>&nbsp;<span class="rtag rc">🏗️C 独立アプリ</span>（コスト 🤖＜🗄️＜🏗️・🤖がデフォルト）
+      ／ 処理種別：<b>🟪AI判断</b> ／ <b>🔧決定論オペ</b>
+    </div>
+  </div>
+</div>
+
+<!-- 核心発見 -->
+<div class="seclabel">2. 核心発見</div>
+<table class="find">
+  <tr><th>観点</th><th>すでにある ✅</th><th>欠けている自動化 ⚠️（ボトルネック）</th></tr>
+  <tr>
+    <td><b>① 集客</b></td>
+    <td class="ok">✅ SNSネタ（5匹の日常動画・介護記録）をGoogle Driveに蓄積中</td>
+    <td class="gap">⚠️ ネタ→台本→投稿文への変換が全工程手動。現職兼業で着手できず、ネタが眠ったまま集客がゼロの状態が続いている</td>
+  </tr>
+  <tr>
+    <td><b>② セールス</b></td>
+    <td class="ok">✅ 3層ポートフォリオの価格・商品設計は完成</td>
+    <td class="gap">⚠️ 問い合わせ受付・予約・決済の仕組みが未整備。開業初日から手動対応になり、時間が消える</td>
+  </tr>
+  <tr>
+    <td><b>③ 提供・運営</b></td>
+    <td class="ok">✅ ケアプランレポートのテンプレートあり<br>✅ お世話管理シート（シッティング用）作成済み</td>
+    <td class="gap">⚠️ テンプレートがあっても毎回の記述は手書き。件数が増えると品質を保つのが困難になる</td>
+  </tr>
+  <tr>
+    <td><b>④ バックオフィス</b></td>
+    <td class="ok">✅ 14資格・20年のPM×アニマルコミュニケーション知見が頭の中に蓄積<br>✅ Google Drive基盤・IT環境あり</td>
+    <td class="gap">⚠️ 知見がまだ「属人の頭の中」。AI言語化が始まっていない＝Tier2講座・Tier3コンサルの土台が作れていない</td>
+  </tr>
+</table>
+<div class="note">🔑 最重要発見：<b>「部品はある。繋がっていない。」</b>── ネタ・テンプレート・お世話管理シート、どれも存在する。それらをエージェントで繋ぐだけで、現職兼業の今でも週数時間の投入で事業が動き始める。</div>
+
+<!-- マップ本体 -->
+<div class="seclabel">3. エージェント化マップ</div>
+<table class="map">
+  <tr>
+    <th style="width:36px;">順</th>
+    <th style="width:200px;">業務</th>
+    <th style="width:60px;">担当(今)</th>
+    <th>🟦入力の自動化</th>
+    <th>🟪エージェント</th>
+    <th>🟧出力の自動化</th>
+    <th style="width:160px;">⚠️ボトルネック</th>
+    <th style="width:110px;">現Lv→目標Lv</th>
+    <th style="width:90px;">コスト</th>
+    <th style="width:120px;">💰月の解放価値</th>
+    <th style="width:60px;">🛠️経路</th>
+  </tr>
+
+  <tr class="group-header"><td colspan="11">① 集客（マーケ）</td></tr>
+  <tr>
+    <td><span class="ordbadge">1</span></td>
+    <td><b>🟢 SNS投稿台本・キャプション下書き生成</b><br><span style="font-size:10.5px;color:#777;">5匹の日常メモ→Instagram / TikTok用下書き自動生成</span></td>
+    <td>須田氏</td>
+    <td>✗ 箇条書きメモを手入力（今は入力の自動化不要）</td>
+    <td>◎ ARFの世界観・語り口を学習したAIがキャプション＋台本＋ハッシュタグを生成</td>
+    <td>△ 予約投稿ツール（Buffer等）で後から追加可</td>
+    <td class="miss">現職兼業でネタが眠ったまま。集客がゼロで開業が遅れる</td>
+    <td><span class="pill p0">人力</span> <span class="arrow">→</span> <span class="pill p2">承認</span></td>
+    <td><span class="cost s">🔧 DIY</span><br>¥0</td>
+    <td>週5h解放<br>¥5〜8万/月相当の発信量を確保</td>
+    <td><span class="rtag ra">🤖A</span></td>
+  </tr>
+
+  <tr class="group-header"><td colspan="11">② セールス（商談・販売）</td></tr>
+  <tr>
+    <td><span class="ordbadge">3</span></td>
+    <td><b>予約・問い合わせ受付自動化</b><br><span style="font-size:10.5px;color:#777;">Calendly等で予約→確認メール自動送信（決定論オペ）</span></td>
+    <td>須田氏</td>
+    <td>✗ 未整備</td>
+    <td>🔧 決定論オペ（AI不要・条件分岐のみ）</td>
+    <td>△ 確認メール自動送信（Calendly標準機能）</td>
+    <td class="miss">開業初日から手動日程調整で時間が消える。1問い合わせ＝往復3〜5通のやり取り</td>
+    <td><span class="pill p0">人力</span> <span class="arrow">→</span> <span class="pill p3">無人運転</span></td>
+    <td><span class="cost s">🔧 DIY</span><br>¥0〜2,000/月</td>
+    <td>週2h解放<br>¥2〜3万/月相当</td>
+    <td><span class="rtag ra">🤖A</span></td>
+  </tr>
+  <tr>
+    <td><span class="ordbadge cool">5</span></td>
+    <td>決済・領収書・契約書発行自動化<br><span style="font-size:10.5px;color:#777;">Stripe等決済→自動書類発行（決定論オペ）</span></td>
+    <td>須田氏</td>
+    <td>✗ 未整備</td>
+    <td>🔧 決定論オペ（AI不要）</td>
+    <td>✗ 未整備</td>
+    <td class="miss">決済後の書類発行が手動になる。法人としての信頼性にも関わる</td>
+    <td><span class="pill p0">人力</span> <span class="arrow">→</span> <span class="pill p3">無人運転</span></td>
+    <td><span class="cost m">👷 施工要</span><br>初期¥3〜5万</td>
+    <td>週1h解放</td>
+    <td><span class="rtag ra">🤖A</span></td>
+  </tr>
+
+  <tr class="group-header"><td colspan="11">③ 提供・運営（デリバリー）</td></tr>
+  <tr>
+    <td><span class="ordbadge">2</span></td>
+    <td><b>🟢 ケアプランニングレポート下書き生成</b><br><span style="font-size:10.5px;color:#777;">セッションメモ→既存テンプレート形式のレポート全文を自動生成</span></td>
+    <td>須田氏</td>
+    <td>✗ セッションメモを手入力（今は入力の自動化不要）</td>
+    <td>◎ 既存テンプレートを学習し、箇条書きメモ→レポート全文を自動生成</td>
+    <td>△ PDF出力（手動送付でも可。後から自動化可）</td>
+    <td class="miss">テンプレはあるが毎回の記述に30〜60分。件数が増えると品質維持が困難</td>
+    <td><span class="pill p1">たたき台</span> <span class="arrow">→</span> <span class="pill p2">承認</span></td>
+    <td><span class="cost s">🔧 DIY</span><br>¥0</td>
+    <td>1件30〜40分解放<br>月5件なら¥3〜5万相当</td>
+    <td><span class="rtag ra">🤖A</span></td>
+  </tr>
+  <tr>
+    <td><span class="ordbadge cool">4</span></td>
+    <td>お世話管理シート → 飼い主向け報告書自動生成<br><span style="font-size:10.5px;color:#777;">シッティング中の記録→飼い主へのサマリーレポート</span></td>
+    <td>須田氏</td>
+    <td>✗ 手動記入（既存シートあり）</td>
+    <td>○ 記録内容をARFの言葉で飼い主向けサマリーに変換</td>
+    <td>✗ 手動送付</td>
+    <td class="miss">記録はあるが報告書が手動。差別化の切り札になるのに活かせていない</td>
+    <td><span class="pill p1">たたき台</span> <span class="arrow">→</span> <span class="pill p2">承認</span></td>
+    <td><span class="cost s">🔧 DIY</span><br>¥0</td>
+    <td>1件20分解放<br>顧客体験の差別化</td>
+    <td><span class="rtag ra">🤖A</span></td>
+  </tr>
+
+  <tr class="group-header"><td colspan="11">④ バックオフィス（管理）</td></tr>
+  <tr>
+    <td><span class="ordbadge cool">6</span></td>
+    <td>ARFメソッド・アニマルコミュニケーション知識ベース構築<br><span style="font-size:10.5px;color:#777;">頭の中の知見をAI言語化→Tier2講座・Tier3コンサルの土台</span></td>
+    <td>須田氏</td>
+    <td>✗ 手動入力（事例・Q&Aを書く）</td>
+    <td>○ 箇条書き・口述メモを体系化・言語化するAIが補助</td>
+    <td>✗ Drive保存</td>
+    <td class="miss">14資格・20年知見がまだ「頭の中」。ここが整わないとTier2・Tier3はスケールしない</td>
+    <td><span class="pill p0">人力</span> <span class="arrow">→</span> <span class="pill p1">たたき台</span></td>
+    <td><span class="cost s">🔧 DIY</span><br>¥0</td>
+    <td>長期：講座制作・コンサル提案の工数を大幅短縮</td>
+    <td><span class="rtag ra">🤖A</span></td>
+  </tr>
+</table>
+<div class="legend" style="margin-top:8px;">
+  <span class="pill p0">人力</span> <span class="pill p1">たたき台</span> <span class="pill p2">承認</span> <span class="pill p3">無人運転</span>　／　
+  🟢即効＝入力の自動化なしでもAIだけで承認レベルに届く業務　／　現Lvは見立て・要補正
+</div>
+
+<!-- 最初の3本 -->
+<div class="seclabel">4. 最初の3本</div>
+<div class="wires">
+  <div class="wire">
+    <div class="n">01</div>
+    <h4>🟢 SNS投稿台本エージェント</h4>
+    <p>5匹の日常・介護記録の箇条書きメモを入力すると、ARFの世界観で書かれたInstagramキャプション＋TikTok台本の下書きを自動生成。須田氏が確認→投稿するだけ。</p>
+    <p style="margin-top:6px;font-size:11px;">処理種別：🟪AI判断　／　経路：<span class="rtag ra">🤖A</span><br>HANDOFF：@エージェント構築オーケストレーター</p>
+    <div class="why">
+      💰 週5h解放・施工費¥0・今すぐ着手可<br>
+      🔧 須田氏DIY可能<br>
+      📌 開業前の今から集客コンテンツが積まれる。ネタはすでにある。
+    </div>
+  </div>
+  <div class="wire">
+    <div class="n">02</div>
+    <h4>🟢 ケアプランレポート下書きエージェント</h4>
+    <p>セッション後の箇条書きメモを入力すると、既存テンプレート形式のレポート全文（ARF式の言葉で）を自動生成。確認して送るだけ。テンプレートをそのまま学習素材に使える。</p>
+    <p style="margin-top:6px;font-size:11px;">処理種別：🟪AI判断　／　経路：<span class="rtag ra">🤖A</span><br>HANDOFF：@エージェント構築オーケストレーター</p>
+    <div class="why">
+      💰 1件30〜40分解放・施工費¥0・即着手可<br>
+      🔧 須田氏DIY可能（テンプレを渡すだけ）<br>
+      📌 Tier1のプレミアム品質を落とさず件数を増やせる
+    </div>
+  </div>
+  <div class="wire">
+    <div class="n">03</div>
+    <h4>予約受付・確認メール自動化</h4>
+    <p>Calendly（無料）でURLを共有→顧客が自分で予約→確認メールが自動送信。決定論オペなのでAI不要。開業前に30分で整備できる。</p>
+    <p style="margin-top:6px;font-size:11px;">処理種別：🔧決定論オペ（AI不要）<br>経路：<span class="rtag ra">🤖A</span>相当（ノーコードSaaS）</p>
+    <div class="why">
+      💰 週2h解放・¥0〜2,000/月・開業前に整備<br>
+      🔧 須田氏DIY可（登録〜設定30分）<br>
+      📌 開業初日から手動日程調整ゼロになる
+    </div>
+  </div>
+</div>
+
+<!-- North Star -->
+<div class="seclabel">5. North Star ダッシュボード</div>
+<div class="coef">
+  <div class="gauge">
+    <div class="num">16%</div>
+    <div class="to">→ 目標 100%（事業が自律的に回る状態）</div>
+    <div class="bar">
+      <i style="width:16%"></i>
+      <div class="tgt" style="left:100%"></div>
+    </div>
+    <div class="note" style="margin-top:14px;text-align:left;">
+      <b>あなた抜きで回る係数＝現在16%</b><br>
+      現状はほぼ全業務が人力。テンプレート・お世話管理シートがあるぶん、完全ゼロではない。<br><br>
+      <b>最初の3本を建てるだけで約40〜45%に到達する見立て。</b><br>
+      SNS台本＋レポート下書きが「承認」レベルになると、1日30分の投入で事業のコアが自律的に回り始める。<br>
+      <span style="color:#999;font-size:10.5px;display:block;margin-top:6px;">※人時重み付き加重平均。見立て・要補正。段の数値：人力=0 / たたき台=1 / 承認=2 / 無人運転=3</span>
+    </div>
+  </div>
+  <div style="padding-top:10px;">
+    <div class="arow"><span>SNS台本生成</span><div class="mini"><i style="width:0%;background:var(--s0)"></i></div><span>人力→承認</span></div>
+    <div class="arow"><span>ケアプランレポート</span><div class="mini"><i style="width:33%;background:var(--s1)"></i></div><span>たたき台→承認</span></div>
+    <div class="arow"><span>予約受付</span><div class="mini"><i style="width:0%;background:var(--s0)"></i></div><span>人力→無人運転</span></div>
+    <div class="arow"><span>講座コンテンツ制作</span><div class="mini"><i style="width:0%;background:var(--s0)"></i></div><span>人力→たたき台</span></div>
+    <div class="arow"><span>ARFメソッド言語化</span><div class="mini"><i style="width:0%;background:var(--s0)"></i></div><span>人力→たたき台</span></div>
+    <div class="arow"><span>決済・契約発行</span><div class="mini"><i style="width:0%;background:var(--s0)"></i></div><span>人力→無人運転</span></div>
+    <p style="font-size:11px;color:#999;margin-top:10px;">バーの長さ＝現Lv÷目標Lv。色＝現在の段。</p>
+  </div>
+</div>
+
+<!-- 制御ループ -->
+<div class="seclabel">6. ARFの日常制御ループ（開業後のイメージ）</div>
+<div class="loop">
+  <div class="step">
+    <b>① ネタ保存</b>
+    5匹の日常・介護記録をDriveにアップ
+    <div class="ag">Google Drive</div>
+  </div>
+  <div class="step">
+    <b>② 台本生成</b>
+    箇条書きメモ → SNSキャプション・台本下書き自動生成
+    <div class="ag">SNS台本エージェント 🤖</div>
+  </div>
+  <div class="step">
+    <b>③ 承認・投稿</b>
+    須田氏がOKを押す → 予約投稿
+    <div class="ag">Instagram / TikTok</div>
+  </div>
+  <div class="step">
+    <b>④ 予約受付</b>
+    問い合わせ → 自動確認メール → カレンダー確定
+    <div class="ag">Calendly（決定論🔧）</div>
+  </div>
+  <div class="step">
+    <b>⑤ セッション実施</b>
+    ARFメソッド本体。須田氏が担当（属人・聖域）
+    <div class="ag">須田氏</div>
+  </div>
+  <div class="step">
+    <b>⑥ レポート生成</b>
+    セッションメモ → レポート下書き → 確認送付
+    <div class="ag">レポートエージェント 🤖</div>
+  </div>
+</div>
+
+<footer>
+  <span>© 2026 ARF株式会社 / My Treasury ARF　｜　生成：BlueLamp エージェントマップ（アトラス）</span>
+  <span>これは地図です。実装・運用・更新は別途。更新トリガー：開業時・事業変更時・四半期ごと。</span>
+</footer>
+
+</div>
+</body>
+</html>
