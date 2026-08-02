@@ -175,7 +175,7 @@ export const PetHomePage = ({ pet, allPets, onSwitchPet, onAddPet }: PetHomePage
 
         {/* My Treasury ARF リンク */}
         <a
-          href="https://my-treasury-arf.pages.dev/"
+          href="https://my-treasury-arf.y-suda-arf.workers.dev/"
           target="_blank"
           rel="noopener noreferrer"
           className="w-full text-center text-xs text-amber-700 bg-white/50 backdrop-blur border border-amber-200/50 rounded-xl py-3 mb-6 hover:bg-white/70 transition-all"

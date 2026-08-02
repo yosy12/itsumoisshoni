@@ -16,6 +16,7 @@ dist-ssr
 /playwright-report
 /tests/temp
 /test-results
+/.playwright-mcp
 
 # Editor directories and files
 .vscode/*

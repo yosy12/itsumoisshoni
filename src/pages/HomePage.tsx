@@ -52,6 +52,9 @@ export const HomePage = ({ onRegister }: HomePageProps) => {
       <div className="text-center pt-10 pb-2 px-5">
         <h1 className="text-xl font-bold text-amber-900 tracking-widest">いつも一緒</h1>
         <p className="text-xs text-amber-700/70 mt-0.5">{timeConfig.emoji} {timeConfig.label}</p>
+        <p className="text-xs text-amber-700 mt-2 bg-amber-100/70 backdrop-blur rounded-full px-4 py-1 inline-block">
+          ✨ サンプルのコたちです。お気軽にお試しください！
+        </p>
       </div>
 
       <div className="flex-1 flex flex-col items-center px-5">
@@ -76,13 +79,16 @@ export const HomePage = ({ onRegister }: HomePageProps) => {
           )}
 
           {/* ペット写真 */}
-          <div className={`transition-transform duration-300 ${activeAction ? 'scale-105' : 'scale-100'}`}>
+          <div className={`relative transition-transform duration-300 ${activeAction ? 'scale-105' : 'scale-100'}`}>
             <div className="w-56 h-56 rounded-full overflow-hidden border-[6px] border-white shadow-2xl">
               <img
                 src={pet.photo}
                 alt={pet.name}
                 className="w-full h-full object-cover"
               />
+            </div>
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-amber-400 text-white text-xs font-bold px-3 py-0.5 rounded-full shadow-md whitespace-nowrap">
+              サンプル
             </div>
           </div>
 
@@ -131,6 +137,16 @@ export const HomePage = ({ onRegister }: HomePageProps) => {
           </button>
           <p className="text-center text-xs text-amber-700/50 mt-2">無料ではじめられます</p>
         </div>
+
+        {/* My Treasury ARF リンク */}
+        <a
+          href="https://my-treasury-arf.y-suda-arf.workers.dev/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full text-center text-xs text-amber-700 bg-white/50 backdrop-blur border border-amber-200/50 rounded-xl py-3 mb-8 hover:bg-white/70 transition-all"
+        >
+          🌿 ペットのことで迷ったら → <span className="font-medium">My Treasury ARF</span> に相談
+        </a>
       </div>
     </div>
   );
