@@ -2,7 +2,10 @@
 // このWorker経由でのみ呼び出す。課金・アカウントはまだ無いため、悪用防止の
 // 暫定措置としてIPベースの1日あたり上限のみ設ける（本格的な有料化は別途）。
 const DAILY_LIMIT = 30;
-const GEMINI_MODEL = "gemini-3.6-flash";
+// gemini-3.6-flashは常時「思考」を行い18秒前後かかる上に大半のトークンが
+// 思考に消費される。gemini-3.5-flash-liteは思考なしで1秒未満・キャラクター
+// らしさも十分だったため、この軽い会話用途にはこちらを採用。
+const GEMINI_MODEL = "gemini-3.5-flash-lite";
 const MAX_MESSAGE_LENGTH = 300;
 
 const KIND_LABEL = { dog: "犬", cat: "猫", bird: "小鳥", other: "ペット" };
@@ -50,8 +53,7 @@ async function callGemini(env, pet, message) {
         systemInstruction: { parts: [{ text: systemInstruction }] },
         contents: [{ role: "user", parts: [{ text: message }] }],
         generationConfig: {
-          thinkingConfig: { thinkingLevel: "low" },
-          maxOutputTokens: 500,
+          maxOutputTokens: 300,
           temperature: 0.9,
         },
       }),
