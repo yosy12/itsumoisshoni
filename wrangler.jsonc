@@ -1,11 +1,19 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "itsumoisshoni",
+  "main": "worker/index.js",
   "compatibility_date": "2026-07-05",
   "observability": {
     "enabled": true
   },
   "assets": {
-    "directory": "./dist"
-  }
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "CHAT_RATE_LIMIT",
+      "id": "3d6e766babf042e788265d45e8ab8f1c"
+    }
+  ]
 }

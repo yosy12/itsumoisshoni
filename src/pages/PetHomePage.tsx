@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Pet, Theme } from '../types';
 import { getTimeConfig, getActionsForTimeAndKind } from '../data/scenes';
 import { THEMES, getThemePalette } from '../data/themes';
+import { ChatModal } from '../components/ChatModal';
 
 interface PetHomePageProps {
   pet: Pet;
@@ -21,7 +22,6 @@ const sceneDecorations: Record<string, string> = {
 };
 
 const premiumFeatures = [
-  { id: 'talk', emoji: '💬', label: '話しかける', desc: `${' '}AIがその子らしく返事してくれます` },
   { id: 'album', emoji: '📷', label: 'アルバム', desc: '季節ごとに思い出を残せます' },
 ];
 
@@ -33,6 +33,7 @@ export const PetHomePage = ({ pet, allPets, theme, onSwitchPet, onAddPet, onSetT
   const [showPremium, setShowPremium] = useState(false);
   const [tappedFeature, setTappedFeature] = useState<typeof premiumFeatures[0] | null>(null);
   const [showThemePicker, setShowThemePicker] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   const timeConfig = getTimeConfig();
   const availableActions = getActionsForTimeAndKind(timeConfig.slot, pet.kind);
@@ -139,6 +140,12 @@ export const PetHomePage = ({ pet, allPets, theme, onSwitchPet, onAddPet, onSetT
           {pet.personality && (
             <p className={`text-xs mt-1 text-center max-w-xs ${palette.subText}`}>{pet.personality}</p>
           )}
+          <button
+            onClick={() => setShowChat(true)}
+            className={`mt-3 flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-bold text-white shadow-sm active:scale-95 transition-all ${palette.accentBg} ${palette.accentBgHover}`}
+          >
+            💬 はなしかける
+          </button>
         </div>
 
         {/* 無料アクションボタン */}
@@ -191,12 +198,12 @@ export const PetHomePage = ({ pet, allPets, theme, onSwitchPet, onAddPet, onSetT
             <span className={`text-xs font-medium ${palette.subText}`}>プレミアム機能</span>
             <div className="flex-1 h-px bg-white/60" />
           </div>
-          <div className="grid grid-cols-2 gap-2.5">
+          <div className="flex justify-center">
             {premiumFeatures.map(feature => (
               <button
                 key={feature.id}
                 onClick={() => handlePremiumTap(feature)}
-                className="relative rounded-2xl py-3.5 px-2 flex flex-col items-center gap-1.5 bg-white/40 backdrop-blur border border-white/60 shadow-sm active:scale-95 transition-all"
+                className="relative rounded-2xl py-3.5 px-6 flex flex-col items-center gap-1.5 bg-white/40 backdrop-blur border border-white/60 shadow-sm active:scale-95 transition-all"
               >
                 <span className="text-2xl opacity-50">{feature.emoji}</span>
                 <span className="text-xs text-gray-400 font-medium">{feature.label}</span>
@@ -304,6 +311,8 @@ export const PetHomePage = ({ pet, allPets, theme, onSwitchPet, onAddPet, onSetT
           </div>
         </div>
       )}
+
+      {showChat && <ChatModal pet={pet} palette={palette} onClose={() => setShowChat(false)} />}
     </div>
   );
 };

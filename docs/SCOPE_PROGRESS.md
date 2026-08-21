@@ -32,7 +32,19 @@ BlueLampでの開発は以下のフローに沿って進行します：
 
 ## バックエンド実装計画
 
-対象なし。本アプリ（いつも一緒）はReact+TS+Vite製の静的フロントエンドで、データ保持はlocalStorageのみ・ログインなし・バックエンド/DB/外部APIなし（Cloudflare Pages静的配信、`wrangler.jsonc`にFunctions/DBバインディングなし）。`src/types/index.ts`にAPI_PATHS定義も存在しない。Phase 5と同様の理由でPhase 7〜8（バックエンド実装・API統合）もスキップ対象。
+2026-08-21に「話しかける」機能でCloudflare Worker（`worker/index.js`）を追加するまでは対象なしだった。本アプリ（いつも一緒）は基本的にReact+TS+Vite製の静的フロントエンドで、ペット登録データはlocalStorageのみ・ログイン機能なし。現在バックエンドがあるのは`/api/chat`（Gemini API連携＋KVによるIPベースの1日上限）のみで、ペット情報・アルバム等は引き続きバックエンドなし。
+
+## 📅 開発履歴
+
+### 2026-08-21
+- [x] CSP設定がGoogle Fonts（Noto Sans JP）の読み込みをブロックしていた不具合を修正（`public/_headers`）
+- [x] 雰囲気テーマ機能を実装（あたたかみ・おちつき・季節感の3種）。バックエンド不要、`state.theme`としてlocalStorageに保存。マイページの背景・見出し・アクセント色に反映。ユーザー要望を受けて着手
+- [x] 「話しかける」（AI会話）機能を実装。ユーザー方針: 「3ヶ月無料→有料化」を将来的に狙うが、今のアプリにアカウント・決済機能が無いため強制はできない。今回はまず無料開放＋悪用防止の1日30回上限（IPベース）のみ実装し、本格的な有料化（アカウント・決済基盤）は別途相談することで合意
+  - Worker（`worker/index.js`）を新規追加。`wrangler.jsonc`に`main`・KVネームスペース（`CHAT_RATE_LIMIT`）・`GEMINI_API_KEY`（secret）を追加
+  - モデルは`gemini-3.6-flash`（`gemini-2.5-flash`は新規ユーザー向け提供終了済みのため切替。thinkingConfig.thinkingLevelは"low"が最小、thinkingBudget:0は同モデルで拒否されるため不可。maxOutputTokensは思考トークンに食われて返答が途切れないよう500に設定）
+  - 登録したペットの性格・好き嫌い・状態（お空/今いる/架空）をsystemInstructionに反映し、それらしい一人称の返答を生成
+  - Playwright・curl両方で実機確認（レート制限カウントの実加算、性格・好みを反映した応答内容まで確認済み）
+  - [ ] 次: 本格的な有料化（3ヶ月無料トライアル→買い切り課金）を作る場合、アカウント（ログイン）と決済（Stripe等）基盤が新たに必要。価格はユーザーと相談の上¥1,980〜¥2,980程度（買い切り＋AI会話クレジット追加購入）を仮の目安として提示済み、Gemini実コスト確認後に確定予定
 
 ## 📊 受入試験進捗
 - **総テスト項目数**: 16項目
