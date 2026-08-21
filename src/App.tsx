@@ -29,7 +29,7 @@ const parseUrlParams = (): PrefilledPet => {
 };
 
 function App() {
-  const { state, registerPet, switchPet, getCurrentPet } = useAppState();
+  const { state, registerPet, switchPet, setTheme, getCurrentPet } = useAppState();
   const prefilled = parseUrlParams();
 
   const getInitialScreen = (): Screen => {
@@ -65,8 +65,10 @@ function App() {
         <PetHomePage
           pet={currentPet}
           allPets={state.registeredPets}
+          theme={state.theme}
           onSwitchPet={(id) => switchPet(id)}
           onAddPet={() => setScreen('register')}
+          onSetTheme={setTheme}
         />
       )}
     </div>

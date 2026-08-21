@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { AppState, Pet } from '../types';
+import type { AppState, Pet, Theme } from '../types';
 
 const STORAGE_KEY = 'itsumoisshoni_state';
 
@@ -36,10 +36,14 @@ export const useAppState = () => {
     setState(prev => ({ ...prev, currentPetId: petId }));
   };
 
+  const setTheme = (theme: Theme) => {
+    setState(prev => ({ ...prev, theme }));
+  };
+
   const getCurrentPet = (): Pet | null => {
     if (!state.currentPetId) return null;
     return state.registeredPets.find(p => p.id === state.currentPetId) ?? null;
   };
 
-  return { state, registerPet, switchPet, getCurrentPet };
+  return { state, registerPet, switchPet, setTheme, getCurrentPet };
 };
