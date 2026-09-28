@@ -3,6 +3,7 @@
   "name": "itsumoisshoni",
   "main": "worker/index.js",
   "compatibility_date": "2026-07-05",
+  "workers_dev": true,
   "observability": {
     "enabled": true
   },

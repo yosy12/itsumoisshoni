@@ -90,6 +90,6 @@ test('E2E-HOME-005: 外部相談リンク', async ({ page }) => {
 
   const consultLink = page.getByRole('link', { name: /My Treasury ARF/ });
   await expect(consultLink).toBeVisible();
-  await expect(consultLink).toHaveAttribute('href', 'https://my-treasury-arf.y-suda-arf.workers.dev/');
+  await expect(consultLink).toHaveAttribute('href', 'https://mytreasuryarf.com/');
   await expect(consultLink).toHaveAttribute('target', '_blank');
 });
