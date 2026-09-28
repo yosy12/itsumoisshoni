@@ -140,7 +140,7 @@ export const HomePage = ({ onRegister }: HomePageProps) => {
 
         {/* My Treasury ARF リンク */}
         <a
-          href="https://my-treasury-arf.y-suda-arf.workers.dev/"
+          href="https://mytreasuryarf.com/"
           target="_blank"
           rel="noopener noreferrer"
           className="w-full text-center text-xs text-amber-700 bg-white/50 backdrop-blur border border-amber-200/50 rounded-xl py-3 mb-8 hover:bg-white/70 transition-all"
