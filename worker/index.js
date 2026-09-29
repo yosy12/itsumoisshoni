@@ -7,6 +7,8 @@ const DAILY_LIMIT = 30;
 // らしさも十分だったため、この軽い会話用途にはこちらを採用。
 const GEMINI_MODEL = "gemini-3.5-flash-lite";
 const MAX_MESSAGE_LENGTH = 300;
+// ペットの設定（名前・性格など）も Gemini への入力になるため長さを制限する（有料枠の費用の悪用防止）
+const MAX_PET_FIELD_LENGTH = 100;
 
 const KIND_LABEL = { dog: "犬", cat: "猫", bird: "小鳥", other: "ペット" };
 const STATUS_DESC = {
@@ -22,7 +24,21 @@ function corsJson(body, status = 200) {
   });
 }
 
-function buildSystemInstruction(pet) {
+const clip = (value) => (value == null ? "" : String(value).trim().slice(0, MAX_PET_FIELD_LENGTH));
+
+export function sanitizePet(raw) {
+  const pet = raw && typeof raw === "object" ? raw : {};
+  return {
+    name: clip(pet.name),
+    kind: clip(pet.kind),
+    status: clip(pet.status),
+    personality: clip(pet.personality),
+    likes: clip(pet.likes),
+    dislikes: clip(pet.dislikes),
+  };
+}
+
+export function buildSystemInstruction(pet) {
   const kind = KIND_LABEL[pet.kind] || "ペット";
   const statusDesc = STATUS_DESC[pet.status] || "";
   return [
@@ -80,7 +96,7 @@ async function handleChat(request, env) {
   }
 
   const message = (body.message || "").toString().trim().slice(0, MAX_MESSAGE_LENGTH);
-  const pet = body.pet || {};
+  const pet = sanitizePet(body.pet);
   if (!message || !pet.name) return corsJson({ ok: false, error: "missing_required_fields" }, 400);
 
   const ip = request.headers.get("cf-connecting-ip") || "unknown";
