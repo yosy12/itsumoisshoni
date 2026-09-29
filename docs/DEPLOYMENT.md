@@ -19,3 +19,4 @@
 | 日時 (JST) | commit | Version ID | 戻し先 Version ID | 内容 |
 |---|---|---|---|---|
 | 2026-09-29 | 61e3ee7 | 106e15a5-e0b5-427d-8b20-3e5840688171 | a6c6056d-383c-4678-afd1-5574588ec5bb | MTA へのリンクを https://mytreasuryarf.com/ に変更（PR #1）、workers_dev 明記、Pages workflow 削除（PR #2） |
+| 2026-09-29 19:20 | `736f7af`（PR#4） | `8c9eec11-43dc-4972-ab0f-6428b53da046` | `106e15a5-e0b5-427d-8b20-3e5840688171` | セキュリティ総点検: 会話 API のペット設定を各100文字に制限（Gemini 有料枠の費用悪用防止）、CSP に frame-ancestors 等、npm audit fix（nanoid）。事後: トップ 200・CSP に frame-ancestors、/api/chat の実呼び出し 200・空入力 400、コンソールエラー0件 |
