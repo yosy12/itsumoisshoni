@@ -5,6 +5,8 @@ import type { Pet } from '../types';
 
 interface HomePageProps {
   onRegister: () => void;
+  // 新アドレスでだけ渡す。前のアドレス（workers.dev）で付けた記録を取り寄せる
+  onPullFromLegacy?: () => void;
 }
 
 const sceneDecorations: Record<string, string> = {
@@ -15,7 +17,7 @@ const sceneDecorations: Record<string, string> = {
   night: '🌙 ⭐ ✨',
 };
 
-export const HomePage = ({ onRegister }: HomePageProps) => {
+export const HomePage = ({ onRegister, onPullFromLegacy }: HomePageProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
@@ -136,6 +138,11 @@ export const HomePage = ({ onRegister }: HomePageProps) => {
             🐾 自分のコを登録する
           </button>
           <p className="text-center text-xs text-amber-700/50 mt-2">無料ではじめられます</p>
+          {onPullFromLegacy && (
+            <button onClick={onPullFromLegacy} className="w-full text-center text-xs text-amber-700 underline underline-offset-4 mt-3 py-1">
+              以前から使っている方は、記録を引き継げます
+            </button>
+          )}
         </div>
 
         {/* My Treasury ARF リンク */}

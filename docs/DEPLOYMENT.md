@@ -2,8 +2,43 @@
 
 ## 公開先
 
-- 正式公開先: Cloudflare Workers `itsumoisshoni`（https://itsumoisshoni.y-suda-arf.workers.dev/）
+- 正式公開先: Cloudflare Workers `itsumoisshoni` の Custom Domain https://itsumoisshoni.mytreasuryarf.com/（`wrangler.jsonc` の `routes`。2026-10 移転）
+- 旧アドレス: https://itsumoisshoni.y-suda-arf.workers.dev/（`workers_dev: true`）。記録の引き継ぎ元としてしばらく残す。止めない
 - GitHub Pages（https://yosy12.github.io/itsumoisshoni/）は 2026-09-29 に停止済み（二重公開の解消）
+
+## 会社ドメインへの移転（記録の引き継ぎ）
+
+記録はブラウザの localStorage にあり、アドレスが変わると新しいアドレスからは見えない。旧アドレスの画面が
+新アドレスの画面を別タブで開き、ブラウザの中だけで記録を渡す（`src/services/originMove.ts`）。
+
+- 旧アドレスに来た人: 新アドレスが動いていることを確かめてから、記録が無ければ新アドレスへ自動で移す。
+  記録があれば「記録ごと新しいアドレスへ移る」を1回押してもらう。移行後は旧アドレスに来ても新アドレスへ移す
+- 新アドレスに来た人: 記録が無い画面に「以前から使っている方は、記録を引き継げます」。押すと旧アドレスから取り寄せる
+- 旧アドレスの記録は消さない。新アドレスが動いていなければ（DNS 未設定など）、旧アドレスは今まで通り使える
+- 受け渡しの相手は、自分が開いた／自分を開いたタブで、かつ新旧のオリジンに限る（`tests/unit/originMove.test.ts`）
+
+### 反映手順（この順番で行う）
+
+1. このリポの PR をマージし、上の「手順」でデプロイする。`routes` の `custom_domain: true` により、
+   デプロイ時に Cloudflare が `itsumoisshoni.mytreasuryarf.com` の DNS レコードと証明書を作る
+   - 権限: デプロイ用トークン（Edit Cloudflare Workers）は Workers の Custom Domain 一覧の読み取りまでは確認済み。
+     作成ができるかは未確認（作成を試すこと自体が DNS 変更のため）。デプロイで Custom Domain の段だけ
+     認証エラーになった場合でも、新しいコードは旧アドレスで動き、新アドレスが応答しないので引き継ぎの案内は出ない
+     （安全側）。その時は Cloudflare の画面（Workers & Pages → itsumoisshoni → Settings → Domains & Routes →
+     Add → Custom Domain）で `itsumoisshoni.mytreasuryarf.com` を追加する
+   - `itsumoisshoni` という名前の DNS レコードは無いこと（2026-10-01 DNS API で確認）。あると作成が失敗する
+2. 本番確認: `curl -sI https://itsumoisshoni.mytreasuryarf.com/` が 200、`/favicon.svg` が 200、
+   CSP の img-src に新アドレス。旧アドレスを記録の無いブラウザで開くと新アドレスへ移ること。
+   記録のあるブラウザで「記録ごと新しいアドレスへ移る」→ 新アドレスに同じコが出ること
+3. My Treasury ARF の「いつも一緒」リンク（公式サイト index.html・ポータル Sidebar）を新アドレスに変える PR を
+   マージ・デプロイする（新アドレスが動く前にマージしない）
+4. 台帳 `arf-ai-agents/ledger/systems.yaml`（itsumoisshoni の production_urls・custom_domain_routing・mta の links_to）を更新する
+5. 旧アドレスを止めるのは、引き継ぎ期間を置いてから須田様の判断で（止めると、まだ移っていない人の記録が開けなくなる）
+
+### 検証
+
+- 単体: `npm test`
+- 引き継ぎ E2E（localhost と 127.0.0.1 を旧・新に見立てる）: `npm run test:e2e:move`
 
 ## 手順
 
