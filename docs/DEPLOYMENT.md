@@ -55,3 +55,4 @@
 |---|---|---|---|---|
 | 2026-09-29 | 61e3ee7 | 106e15a5-e0b5-427d-8b20-3e5840688171 | a6c6056d-383c-4678-afd1-5574588ec5bb | MTA へのリンクを https://mytreasuryarf.com/ に変更（PR #1）、workers_dev 明記、Pages workflow 削除（PR #2） |
 | 2026-09-29 19:20 | `736f7af`（PR#4） | `8c9eec11-43dc-4972-ab0f-6428b53da046` | `106e15a5-e0b5-427d-8b20-3e5840688171` | セキュリティ総点検: 会話 API のペット設定を各100文字に制限（Gemini 有料枠の費用悪用防止）、CSP に frame-ancestors 等、npm audit fix（nanoid）。事後: トップ 200・CSP に frame-ancestors、/api/chat の実呼び出し 200・空入力 400、コンソールエラー0件 |
+| 2026-10-01 15:2x | `1a1c687`（PR#6） | `bed98338-d13e-4674-96db-a510b4c019d8` | `8c9eec11-43dc-4972-ab0f-6428b53da046` | 会社ドメイン itsumoisshoni.mytreasuryarf.com（Custom Domain を wrangler で作成）へ移転し、旧アドレスの記録をブラウザ内で引き継ぐ仕組み。須田様が案内文言を承認（10/1）。事後: 新アドレス / ・favicon 200（証明書OK）、記録なしで旧アドレスを開くと新アドレスへ移ることを本番で確認。旧アドレスは残す（停止は須田様判断） |
