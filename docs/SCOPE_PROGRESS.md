@@ -36,6 +36,11 @@ BlueLampでの開発は以下のフローに沿って進行します：
 
 ## 📅 開発履歴
 
+### 2026-10-01
+- [x] 会社ドメイン（itsumoisshoni.mytreasuryarf.com）への移転の準備。旧アドレス（workers.dev）の記録を新アドレスへ引き継ぐ仕組み（`src/services/originMove.ts`・`src/hooks/useOriginMove.ts`）、`wrangler.jsonc` に Custom Domain、CSP の img-src に新アドレス。反映手順は `docs/DEPLOYMENT.md`「会社ドメインへの移転」
+  - [ ] 反映（デプロイで Custom Domain 作成）→ MTA のリンク変更 → 台帳更新
+  - [ ] 既存 E2E の2件が移転と無関係に失敗している: E2E-PET-003（ボタン名が「はなしかける」に変わったのにテストは「話しかける」）、E2E-REG-006（写真 `/home/yosy/MyFirstApp/chuck.jpg` がリポに無い）
+
 ### 2026-08-21
 - [x] CSP設定がGoogle Fonts（Noto Sans JP）の読み込みをブロックしていた不具合を修正（`public/_headers`）
 - [x] 雰囲気テーマ機能を実装（あたたかみ・おちつき・季節感の3種）。バックエンド不要、`state.theme`としてlocalStorageに保存。マイページの背景・見出し・アクセント色に反映。ユーザー要望を受けて着手

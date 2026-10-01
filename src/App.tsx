@@ -3,6 +3,9 @@ import { HomePage } from './pages/HomePage';
 import { RegisterPage } from './pages/RegisterPage';
 import { PetHomePage } from './pages/PetHomePage';
 import { useAppState } from './hooks/useAppState';
+import { useOriginMove } from './hooks/useOriginMove';
+import { MovePage } from './components/MovePage';
+import { MoveNotice } from './components/MoveNotice';
 import type { Pet, PetKind, PetStatus } from './types';
 
 type Screen = 'home' | 'register' | 'mypet';
@@ -29,7 +32,7 @@ const parseUrlParams = (): PrefilledPet => {
 };
 
 function App() {
-  const { state, registerPet, switchPet, setTheme, getCurrentPet } = useAppState();
+  const { state, registerPet, switchPet, setTheme, importState, getCurrentPet } = useAppState();
   const prefilled = parseUrlParams();
 
   const getInitialScreen = (): Screen => {
@@ -39,6 +42,8 @@ function App() {
   };
 
   const [screen, setScreen] = useState<Screen>(getInitialScreen);
+  const move = useOriginMove({ state, importState, onImported: () => setScreen('mypet') });
+  const legacyScreens = ['checking', 'offer', 'sending', 'sent', 'sendFailed', 'handingOver'];
 
   const handleRegisterComplete = (pet: Pet) => {
     registerPet(pet);
@@ -49,10 +54,27 @@ function App() {
 
   const currentPet = getCurrentPet();
 
+  if (legacyScreens.includes(move.phase.kind)) {
+    return (
+      <div className="w-full max-w-sm mx-auto min-h-screen">
+        <MovePage
+          phase={move.phase}
+          petCount={state.registeredPets.length}
+          onMove={move.pushToCanonical}
+          onStay={move.dismiss}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-sm mx-auto min-h-screen">
+      <MoveNotice phase={move.phase} onClose={move.dismiss} />
       {screen === 'home' && (
-        <HomePage onRegister={() => setScreen('register')} />
+        <HomePage
+          onRegister={() => setScreen('register')}
+          onPullFromLegacy={move.isCanonical ? move.pullFromLegacy : undefined}
+        />
       )}
       {screen === 'register' && (
         <RegisterPage

@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test worker/index.test.js tests/unit/originMove.test.ts",
+    "test:e2e:move": "playwright test --config playwright.move.config.ts"
   },
   "dependencies": {
     "react": "^19.2.7",

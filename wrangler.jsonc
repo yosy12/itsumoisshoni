@@ -3,7 +3,12 @@
   "name": "itsumoisshoni",
   "main": "worker/index.js",
   "compatibility_date": "2026-07-05",
+  // 旧アドレス（workers.dev）は記録の引き継ぎ元としてしばらく残す。止めるのは引き継ぎ期間の後（docs/DEPLOYMENT.md）
   "workers_dev": true,
+  // 正式アドレス。wrangler deploy 時に Custom Domain（DNS レコードと証明書）が作られる（docs/DEPLOYMENT.md の反映手順）
+  "routes": [
+    { "pattern": "itsumoisshoni.mytreasuryarf.com", "custom_domain": true }
+  ],
   "observability": {
     "enabled": true
   },
